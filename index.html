@@ -1,0 +1,946 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blue Pro — Ditch Your Pool Guy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --blue-deep: #042C53;
+    --blue-mid: #185FA5;
+    --blue-bright: #378ADD;
+    --blue-light: #B5D4F4;
+    --blue-pale: #E6F1FB;
+    --teal: #1D9E75;
+    --teal-light: #9FE1CB;
+    --teal-pale: #E1F5EE;
+    --amber: #EF9F27;
+    --white: #ffffff;
+    --off-white: #F7F9FC;
+    --text-dark: #0a1929;
+    --text-muted: #5a7a96;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--text-dark);
+    color: var(--white);
+    overflow-x: hidden;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1.25rem 4rem;
+    background: rgba(4, 44, 83, 0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(181, 212, 244, 0.1);
+  }
+  .nav-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2rem;
+    letter-spacing: 0.05em;
+    color: var(--white);
+    text-decoration: none;
+  }
+  .nav-logo span { color: var(--blue-bright); }
+  .nav-cta {
+    background: var(--blue-bright);
+    color: var(--white);
+    border: none;
+    padding: 0.65rem 1.75rem;
+    border-radius: 100px;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 500;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.15s;
+    text-decoration: none;
+  }
+  .nav-cta:hover { background: var(--blue-mid); transform: translateY(-1px); }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: flex; flex-direction: column; justify-content: center;
+    position: relative;
+    overflow: hidden;
+    padding: 8rem 4rem 4rem;
+  }
+
+  .hero-bg {
+    position: absolute; inset: 0; z-index: 0;
+    background: radial-gradient(ellipse 80% 60% at 70% 50%, #185FA5 0%, #042C53 40%, #040e1a 100%);
+  }
+
+  /* Pool water animation */
+  .pool-water {
+    position: absolute; bottom: 0; left: 0; right: 0; height: 35%;
+    z-index: 0;
+    overflow: hidden;
+  }
+  .wave {
+    position: absolute; width: 200%; height: 100%;
+    background: linear-gradient(180deg, rgba(55, 138, 221, 0.15) 0%, rgba(29, 158, 117, 0.25) 100%);
+    border-radius: 40% 60% 60% 40% / 40% 40% 60% 60%;
+    animation: wave 8s ease-in-out infinite;
+  }
+  .wave-2 {
+    animation: wave2 11s ease-in-out infinite;
+    opacity: 0.6;
+    background: linear-gradient(180deg, rgba(29, 158, 117, 0.1) 0%, rgba(55, 138, 221, 0.2) 100%);
+  }
+  @keyframes wave { 0%,100% { transform: translateX(-5%) translateY(0); } 50% { transform: translateX(5%) translateY(-8px); } }
+  @keyframes wave2 { 0%,100% { transform: translateX(0) translateY(0); } 50% { transform: translateX(-8%) translateY(6px); } }
+
+  /* Floating bubbles */
+  .bubbles { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
+  .bubble {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(181, 212, 244, 0.08);
+    border: 1px solid rgba(181, 212, 244, 0.15);
+    animation: float linear infinite;
+  }
+  @keyframes float {
+    0% { transform: translateY(0) scale(1); opacity: 0; }
+    10% { opacity: 1; }
+    90% { opacity: 0.6; }
+    100% { transform: translateY(-100vh) scale(1.2); opacity: 0; }
+  }
+
+  .hero-content { position: relative; z-index: 1; max-width: 700px; }
+
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    background: rgba(55, 138, 221, 0.15);
+    border: 1px solid rgba(55, 138, 221, 0.4);
+    border-radius: 100px;
+    padding: 0.4rem 1rem;
+    font-size: 0.8rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--blue-light);
+    margin-bottom: 2rem;
+    animation: fadeInDown 0.8s ease both;
+  }
+  .badge-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--teal-light);
+    animation: pulse 2s ease infinite;
+  }
+  @keyframes pulse { 0%,100% { opacity:1; transform:scale(1); } 50% { opacity:0.5; transform:scale(1.5); } }
+
+  .hero h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(4rem, 10vw, 7.5rem);
+    line-height: 0.92;
+    letter-spacing: 0.02em;
+    margin-bottom: 1.5rem;
+    animation: fadeInDown 0.8s ease 0.1s both;
+  }
+  .hero h1 em {
+    font-style: normal;
+    color: var(--blue-bright);
+    display: block;
+  }
+
+  .hero-sub {
+    font-size: 1.2rem;
+    font-weight: 300;
+    color: rgba(255,255,255,0.75);
+    line-height: 1.65;
+    max-width: 540px;
+    margin-bottom: 2.5rem;
+    animation: fadeInDown 0.8s ease 0.2s both;
+  }
+
+  .hero-actions {
+    display: flex; gap: 1rem; flex-wrap: wrap;
+    animation: fadeInDown 0.8s ease 0.3s both;
+  }
+  .btn-primary {
+    background: var(--blue-bright);
+    color: #fff;
+    border: none;
+    padding: 1rem 2.5rem;
+    border-radius: 100px;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 500;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+    display: inline-block;
+  }
+  .btn-primary:hover { background: #185FA5; transform: translateY(-2px); box-shadow: 0 8px 24px rgba(55,138,221,0.4); }
+
+  .btn-ghost {
+    background: transparent;
+    color: rgba(255,255,255,0.8);
+    border: 1px solid rgba(255,255,255,0.25);
+    padding: 1rem 2.5rem;
+    border-radius: 100px;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 400;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+    display: inline-block;
+  }
+  .btn-ghost:hover { border-color: var(--blue-light); color: var(--white); }
+
+  /* PRICE SHOCK */
+  .price-shock {
+    position: relative; z-index: 1;
+    margin-top: 5rem;
+    display: flex; align-items: stretch; gap: 0;
+    border-radius: 20px;
+    overflow: hidden;
+    border: 1px solid rgba(181, 212, 244, 0.15);
+    max-width: 620px;
+    animation: fadeInUp 0.8s ease 0.5s both;
+  }
+  .price-block {
+    flex: 1; padding: 2rem 2.5rem;
+    display: flex; flex-direction: column; align-items: center;
+  }
+  .price-old {
+    background: rgba(255,255,255,0.05);
+  }
+  .price-new {
+    background: rgba(29, 158, 117, 0.15);
+    border-left: 1px solid rgba(29, 158, 117, 0.3);
+    position: relative;
+  }
+  .price-label {
+    font-size: 0.7rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.45);
+    margin-bottom: 0.5rem;
+  }
+  .price-amount {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 3.5rem;
+    line-height: 1;
+    margin-bottom: 0.25rem;
+  }
+  .price-old .price-amount {
+    color: rgba(255,255,255,0.35);
+    text-decoration: line-through;
+    text-decoration-color: #E24B4A;
+    text-decoration-thickness: 3px;
+  }
+  .price-new .price-amount { color: var(--teal-light); }
+  .price-desc {
+    font-size: 0.8rem;
+    color: rgba(255,255,255,0.45);
+    text-align: center;
+  }
+  .price-savings {
+    position: absolute; top: -12px; right: 16px;
+    background: var(--amber);
+    color: #1a0a00;
+    font-size: 0.72rem;
+    font-weight: 500;
+    padding: 0.2rem 0.7rem;
+    border-radius: 100px;
+    letter-spacing: 0.04em;
+  }
+  .price-vs {
+    display: flex; align-items: center; justify-content: center;
+    padding: 0 0.75rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+    color: rgba(255,255,255,0.25);
+    letter-spacing: 0.1em;
+  }
+
+  @keyframes fadeInDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* SECTION STYLES */
+  section { padding: 6rem 4rem; }
+
+  .section-label {
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--blue-bright);
+    margin-bottom: 1rem;
+  }
+
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(2.5rem, 5vw, 4rem);
+    letter-spacing: 0.03em;
+    line-height: 1;
+    margin-bottom: 1.25rem;
+  }
+
+  .section-body {
+    font-size: 1.05rem;
+    font-weight: 300;
+    color: rgba(255,255,255,0.65);
+    line-height: 1.7;
+    max-width: 540px;
+  }
+
+  /* HOW IT WORKS */
+  .how-section {
+    background: #071828;
+    position: relative; overflow: hidden;
+  }
+  .how-section::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(55,138,221,0.4), transparent);
+  }
+  .how-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 5rem;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  .steps { display: flex; flex-direction: column; gap: 2rem; margin-top: 3rem; }
+  .step {
+    display: flex; gap: 1.5rem;
+    opacity: 0;
+    transform: translateX(-20px);
+    transition: all 0.5s ease;
+  }
+  .step.visible { opacity: 1; transform: translateX(0); }
+  .step-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.1rem;
+    color: var(--blue-bright);
+    letter-spacing: 0.05em;
+    min-width: 2rem;
+    padding-top: 0.2rem;
+  }
+  .step-title {
+    font-size: 1rem;
+    font-weight: 500;
+    margin-bottom: 0.35rem;
+    color: var(--white);
+  }
+  .step-desc {
+    font-size: 0.92rem;
+    font-weight: 300;
+    color: rgba(255,255,255,0.55);
+    line-height: 1.6;
+  }
+
+  /* Phone mockup */
+  .phone-wrap {
+    display: flex; justify-content: center; align-items: center;
+    padding: 2rem 0;
+  }
+  .phone {
+    width: 280px;
+    background: #0a1929;
+    border-radius: 40px;
+    border: 2px solid rgba(55,138,221,0.3);
+    padding: 2.5rem 1.5rem;
+    position: relative;
+    box-shadow: 0 0 80px rgba(55, 138, 221, 0.15), 0 0 0 8px rgba(4,44,83,0.5);
+  }
+  .phone::before {
+    content: '';
+    position: absolute; top: 1.25rem; left: 50%; transform: translateX(-50%);
+    width: 60px; height: 5px; border-radius: 3px;
+    background: rgba(55,138,221,0.25);
+  }
+  .phone-screen { display: flex; flex-direction: column; gap: 0.75rem; }
+  .chat-bubble {
+    border-radius: 14px;
+    padding: 0.75rem 1rem;
+    font-size: 0.78rem;
+    line-height: 1.5;
+    max-width: 90%;
+    animation: bubbleIn 0.4s ease both;
+  }
+  .chat-ai {
+    background: rgba(55, 138, 221, 0.12);
+    border: 1px solid rgba(55,138,221,0.25);
+    color: rgba(255,255,255,0.85);
+    align-self: flex-start;
+  }
+  .chat-user {
+    background: var(--blue-mid);
+    color: #fff;
+    align-self: flex-end;
+  }
+  .chat-label {
+    font-size: 0.62rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.3);
+    margin-bottom: 0.2rem;
+  }
+  .reading-row {
+    display: flex; gap: 0.5rem; margin-top: 0.5rem;
+  }
+  .reading-pill {
+    background: rgba(29,158,117,0.15);
+    border: 1px solid rgba(29,158,117,0.35);
+    border-radius: 8px;
+    padding: 0.4rem 0.6rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    color: var(--teal-light);
+    text-align: center;
+    line-height: 1.3;
+  }
+  .reading-pill span { display: block; font-size: 0.6rem; color: rgba(255,255,255,0.4); }
+  @keyframes bubbleIn { from { opacity:0; transform:scale(0.95) translateY(5px); } to { opacity:1; transform:scale(1) translateY(0); } }
+
+  /* FEATURES */
+  .features-section {
+    background: var(--text-dark);
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    margin-top: 3rem;
+  }
+  .feature-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(181,212,244,0.1);
+    border-radius: 20px;
+    padding: 2rem;
+    transition: all 0.25s;
+    position: relative;
+    overflow: hidden;
+  }
+  .feature-card:hover {
+    border-color: rgba(55,138,221,0.35);
+    background: rgba(55,138,221,0.05);
+    transform: translateY(-3px);
+  }
+  .feature-card::after {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(55,138,221,0.5), transparent);
+    opacity: 0;
+    transition: opacity 0.25s;
+  }
+  .feature-card:hover::after { opacity: 1; }
+  .feature-icon {
+    width: 44px; height: 44px; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 1.25rem;
+    font-size: 1.3rem;
+  }
+  .feature-title {
+    font-size: 1rem;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+  }
+  .feature-desc {
+    font-size: 0.88rem;
+    font-weight: 300;
+    color: rgba(255,255,255,0.5);
+    line-height: 1.65;
+  }
+
+  /* MARKET */
+  .market-section {
+    background: #071828;
+    position: relative;
+  }
+  .market-section::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(55,138,221,0.4), transparent);
+  }
+  .market-inner { max-width: 1200px; margin: 0 auto; }
+  .market-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 1.5rem;
+    margin-top: 3rem;
+  }
+  .stat-card {
+    background: rgba(55,138,221,0.06);
+    border: 1px solid rgba(55,138,221,0.15);
+    border-radius: 20px;
+    padding: 2rem;
+    text-align: center;
+  }
+  .stat-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 3.5rem;
+    color: var(--blue-bright);
+    line-height: 1;
+    margin-bottom: 0.5rem;
+  }
+  .stat-desc {
+    font-size: 0.85rem;
+    font-weight: 300;
+    color: rgba(255,255,255,0.55);
+    line-height: 1.5;
+  }
+  .state-badges {
+    display: flex; gap: 1rem; margin-top: 3rem; flex-wrap: wrap;
+  }
+  .state-badge {
+    display: flex; align-items: center; gap: 0.6rem;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 12px;
+    padding: 0.9rem 1.5rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+  .state-flag { font-size: 1.4rem; }
+  .state-name { color: rgba(255,255,255,0.85); }
+  .state-sub { font-size: 0.75rem; font-weight: 300; color: rgba(255,255,255,0.4); }
+
+  /* PRICING */
+  .pricing-section { background: var(--text-dark); text-align: center; }
+  .pricing-inner { max-width: 520px; margin: 0 auto; }
+  .pricing-card {
+    background: rgba(55,138,221,0.06);
+    border: 1px solid rgba(55,138,221,0.3);
+    border-radius: 28px;
+    padding: 3rem;
+    margin-top: 3rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .pricing-card::before {
+    content: '';
+    position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+    width: 60%; height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(55,138,221,0.8), transparent);
+  }
+  .pricing-badge {
+    display: inline-block;
+    background: var(--amber);
+    color: #1a0a00;
+    font-size: 0.75rem;
+    font-weight: 500;
+    padding: 0.25rem 1rem;
+    border-radius: 100px;
+    letter-spacing: 0.06em;
+    margin-bottom: 1.5rem;
+  }
+  .pricing-price {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 5rem;
+    color: var(--white);
+    line-height: 1;
+  }
+  .pricing-period {
+    font-size: 0.9rem;
+    font-weight: 300;
+    color: rgba(255,255,255,0.45);
+    margin-bottom: 2rem;
+  }
+  .pricing-features { list-style: none; margin: 2rem 0; display: flex; flex-direction: column; gap: 0.85rem; text-align: left; }
+  .pricing-features li {
+    display: flex; gap: 0.75rem; align-items: flex-start;
+    font-size: 0.92rem;
+    font-weight: 300;
+    color: rgba(255,255,255,0.75);
+  }
+  .check { color: var(--teal-light); font-weight: 500; }
+  .pricing-note {
+    font-size: 0.8rem;
+    font-weight: 300;
+    color: rgba(255,255,255,0.35);
+    margin-top: 1.5rem;
+  }
+
+  /* EARLY ACCESS */
+  .signup-section {
+    background: linear-gradient(135deg, #042C53 0%, #071828 100%);
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .signup-section::before {
+    content: '';
+    position: absolute;
+    top: -50%; left: -20%; width: 140%; height: 200%;
+    background: radial-gradient(ellipse at center, rgba(55,138,221,0.08) 0%, transparent 60%);
+    pointer-events: none;
+  }
+  .signup-inner { max-width: 580px; margin: 0 auto; position: relative; z-index: 1; }
+  .signup-form {
+    display: flex; gap: 0.75rem; margin-top: 2.5rem;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(55,138,221,0.3);
+    border-radius: 100px;
+    padding: 0.4rem 0.4rem 0.4rem 1.5rem;
+  }
+  .signup-input {
+    flex: 1; background: transparent; border: none; outline: none;
+    color: #fff; font-family: 'DM Sans', sans-serif;
+    font-size: 0.95rem; font-weight: 300;
+  }
+  .signup-input::placeholder { color: rgba(255,255,255,0.3); }
+  .signup-btn {
+    background: var(--blue-bright); color: #fff;
+    border: none; padding: 0.75rem 1.75rem;
+    border-radius: 100px;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 500; font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .signup-btn:hover { background: var(--blue-mid); }
+  .signup-footer {
+    font-size: 0.8rem;
+    font-weight: 300;
+    color: rgba(255,255,255,0.35);
+    margin-top: 1.25rem;
+  }
+
+  /* FOOTER */
+  footer {
+    background: #040d17;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    padding: 2.5rem 4rem;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .footer-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.5rem;
+    letter-spacing: 0.05em;
+    color: rgba(255,255,255,0.5);
+  }
+  .footer-logo span { color: var(--blue-bright); }
+  .footer-copy {
+    font-size: 0.78rem;
+    font-weight: 300;
+    color: rgba(255,255,255,0.25);
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 900px) {
+    nav { padding: 1rem 1.5rem; }
+    section { padding: 4rem 1.5rem; }
+    .hero { padding: 7rem 1.5rem 3rem; }
+    .how-grid { grid-template-columns: 1fr; gap: 3rem; }
+    .features-grid { grid-template-columns: 1fr; }
+    .market-grid { grid-template-columns: 1fr 1fr; }
+    .phone-wrap { order: -1; }
+    footer { flex-direction: column; gap: 1rem; text-align: center; }
+  }
+  @media (max-width: 600px) {
+    .market-grid { grid-template-columns: 1fr; }
+    .signup-form { flex-direction: column; border-radius: 16px; padding: 1rem; }
+    .signup-btn { border-radius: 12px; }
+    .price-shock { flex-direction: column; }
+    .price-vs { padding: 0.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">BLUE<span>PRO</span></a>
+  <a href="#early-access" class="nav-cta">Get Early Access</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="hero">
+  <div class="hero-bg"></div>
+  <div class="pool-water">
+    <div class="wave"></div>
+    <div class="wave wave-2"></div>
+  </div>
+  <div class="bubbles" id="bubbles"></div>
+
+  <div class="hero-content">
+    <div class="hero-badge">
+      <div class="badge-dot"></div>
+      Now Available in Arizona &amp; Nevada
+    </div>
+
+    <h1>
+      Ditch Your<br>
+      <em>Pool Guy.</em>
+    </h1>
+
+    <p class="hero-sub">
+      Blue Pro puts an AI pool expert in your pocket. Test, diagnose, treat — in minutes. No contracts, no service windows, no $170/month bill.
+    </p>
+
+    <div class="hero-actions">
+      <a href="#early-access" class="btn-primary">Get Early Access — Free</a>
+      <a href="#how-it-works" class="btn-ghost">See how it works</a>
+    </div>
+  </div>
+
+  <div class="price-shock">
+    <div class="price-block price-old">
+      <div class="price-label">Pool Guy</div>
+      <div class="price-amount">$170</div>
+      <div class="price-desc">avg. per month<br>in AZ &amp; NV</div>
+    </div>
+    <div class="price-vs">VS</div>
+    <div class="price-block price-new">
+      <div class="price-savings">Save $1,920/yr</div>
+      <div class="price-label">Blue Pro</div>
+      <div class="price-amount">$10</div>
+      <div class="price-desc">per month<br>cancel anytime</div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how-section" id="how-it-works">
+  <div class="how-grid">
+    <div>
+      <div class="section-label">How it works</div>
+      <h2 class="section-title">Your Pool.<br>Under Control.</h2>
+      <p class="section-body">Blue Pro walks you through every step. From water testing to chemical dosing, it tells you exactly what to buy and what to do — no experience needed.</p>
+
+      <div class="steps">
+        <div class="step" data-delay="0">
+          <div class="step-num">01</div>
+          <div>
+            <div class="step-title">Test your water</div>
+            <div class="step-desc">Use a standard test kit and enter your readings. Blue Pro reads the numbers and knows exactly what's off.</div>
+          </div>
+        </div>
+        <div class="step" data-delay="150">
+          <div class="step-num">02</div>
+          <div>
+            <div class="step-title">Get your diagnosis</div>
+            <div class="step-desc">AI analyzes your pool's chemistry and gives you a plain-English action plan — no jargon, no guesswork.</div>
+          </div>
+        </div>
+        <div class="step" data-delay="300">
+          <div class="step-num">03</div>
+          <div>
+            <div class="step-title">Treat with confidence</div>
+            <div class="step-desc">Exact chemical amounts, which products to use, and when to retest. Step by step.</div>
+          </div>
+        </div>
+        <div class="step" data-delay="450">
+          <div class="step-num">04</div>
+          <div>
+            <div class="step-title">Stay on schedule</div>
+            <div class="step-desc">Blue Pro tracks your pool's history and reminds you when it's time for weekly maintenance.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="phone-wrap">
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="chat-label">Blue Pro AI</div>
+          <div class="chat-bubble chat-ai">Here are your latest water readings:</div>
+          <div class="reading-row">
+            <div class="reading-pill">7.2<span>pH</span></div>
+            <div class="reading-pill">65 ppm<span>Free Cl</span></div>
+            <div class="reading-pill">820 ppm<span>Alkalinity</span></div>
+          </div>
+          <div class="chat-bubble chat-ai" style="animation-delay:0.2s">⚠️ Your pH is a bit low and alkalinity is high. I can fix both with one treatment. Want the plan?</div>
+          <div class="chat-bubble chat-user" style="animation-delay:0.4s">Yes, tell me what to buy</div>
+          <div class="chat-bubble chat-ai" style="animation-delay:0.6s">You'll need <strong>1.5 lbs of muriatic acid</strong> (available at Home Depot ~$8). Add it along the pool wall in the evening. I'll remind you to retest in 24 hrs.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section style="padding: 6rem 4rem; background: var(--text-dark);">
+  <div class="features-section">
+    <div class="section-label">What's included</div>
+    <h2 class="section-title">Everything You Need</h2>
+    <p class="section-body">Every feature the pros use — finally in your hands.</p>
+
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon" style="background: rgba(55,138,221,0.12);">🧪</div>
+        <div class="feature-title">Water Chemistry AI</div>
+        <div class="feature-desc">Enter your test readings and get precise chemical prescriptions. Handles chlorine, pH, alkalinity, calcium hardness, and cyanuric acid.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon" style="background: rgba(29,158,117,0.12);">📅</div>
+        <div class="feature-title">Maintenance Scheduler</div>
+        <div class="feature-desc">Automatic reminders for weekly testing, filter cleaning, and seasonal tasks. Never let your pool get away from you.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon" style="background: rgba(239,159,39,0.12);">☀️</div>
+        <div class="feature-title">Desert-Climate Tuned</div>
+        <div class="feature-desc">Built specifically for hot, sunny climates. Blue Pro knows how AZ and NV heat affects chlorine burn-off and evaporation.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon" style="background: rgba(55,138,221,0.12);">💬</div>
+        <div class="feature-title">24/7 AI Assistant</div>
+        <div class="feature-desc">Got cloudy water at 10pm? Green algae on a Saturday? Ask Blue Pro anytime and get an answer immediately.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon" style="background: rgba(29,158,117,0.12);">📊</div>
+        <div class="feature-title">Chemistry History Log</div>
+        <div class="feature-desc">Track every treatment over time. Spot patterns, understand trends, and prove to yourself that you've got this.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon" style="background: rgba(239,159,39,0.12);">🛒</div>
+        <div class="feature-title">Smart Product Guidance</div>
+        <div class="feature-desc">Recommends exact products and quantities at your local pool store or Home Depot. No upsells, no confusion.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MARKET -->
+<section class="market-section">
+  <div class="market-inner">
+    <div class="section-label">Why Arizona &amp; Nevada</div>
+    <h2 class="section-title">The Pool Capital<br>of America</h2>
+    <p class="section-body">The Southwest has more private residential pools per capita than anywhere else in the country — and they all need maintenance year-round.</p>
+
+    <div class="market-grid">
+      <div class="stat-card">
+        <div class="stat-num">600K+</div>
+        <div class="stat-desc">Residential pools<br>in Arizona alone</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">12</div>
+        <div class="stat-desc">Months per year of<br>active pool season</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">$170</div>
+        <div class="stat-desc">Average monthly cost<br>of pool service</div>
+      </div>
+    </div>
+
+    <div class="state-badges">
+      <div class="state-badge">
+        <div class="state-flag">🌵</div>
+        <div>
+          <div class="state-name">Arizona</div>
+          <div class="state-sub">Phoenix · Scottsdale · Tucson · Mesa</div>
+        </div>
+      </div>
+      <div class="state-badge">
+        <div class="state-flag">🎰</div>
+        <div>
+          <div class="state-name">Nevada</div>
+          <div class="state-sub">Las Vegas · Henderson · Reno</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="pricing-section">
+  <div class="pricing-inner">
+    <div class="section-label">Simple Pricing</div>
+    <h2 class="section-title">One Price.<br>No Surprises.</h2>
+    <p class="section-body" style="margin: 0 auto;">No contracts. No service windows. No wasted Saturdays waiting around.</p>
+
+    <div class="pricing-card">
+      <div class="pricing-badge">🚀 Early Adopter Rate — Locked In Forever</div>
+      <div class="pricing-price">$10</div>
+      <div class="pricing-period">per month · cancel anytime</div>
+
+      <ul class="pricing-features">
+        <li><span class="check">✓</span> AI-powered water chemistry diagnosis</li>
+        <li><span class="check">✓</span> Unlimited questions &amp; guidance</li>
+        <li><span class="check">✓</span> Weekly maintenance scheduler</li>
+        <li><span class="check">✓</span> Full chemistry history log</li>
+        <li><span class="check">✓</span> Desert-climate optimized recommendations</li>
+        <li><span class="check">✓</span> Product guidance with local store availability</li>
+        <li><span class="check">✓</span> Priority access to new features</li>
+      </ul>
+
+      <a href="#early-access" class="btn-primary" style="width: 100%; text-align: center; display: block;">Get Early Access</a>
+
+      <div class="pricing-note">Compared to $140–$200/month for a traditional pool service. Blue Pro pays for itself on day one.</div>
+    </div>
+  </div>
+</section>
+
+<!-- EARLY ACCESS SIGNUP -->
+<section class="signup-section" id="early-access">
+  <div class="signup-inner">
+    <div class="section-label">Join the Waitlist</div>
+    <h2 class="section-title" style="font-size: clamp(2.5rem,5vw,3.5rem);">Be First In The Water</h2>
+    <p class="section-body" style="margin: 0 auto; color: rgba(255,255,255,0.6);">Blue Pro is in beta and opening up to early users in Arizona and Nevada first. Drop your email — we'll reach out when your spot is ready.</p>
+
+    <div class="signup-form">
+      <input type="email" class="signup-input" placeholder="your@email.com">
+      <button class="signup-btn" onclick="handleSignup()">Claim My Spot →</button>
+    </div>
+    <div class="signup-footer">No spam. Early access only. Your rate locks in at $10/mo forever.</div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">BLUE<span>PRO</span></div>
+  <div class="footer-copy">© 2025 Blue Pro · Arizona &amp; Nevada · Built for pool owners who do it themselves.</div>
+</footer>
+
+<script>
+  // Bubbles
+  const container = document.getElementById('bubbles');
+  for (let i = 0; i < 18; i++) {
+    const b = document.createElement('div');
+    b.className = 'bubble';
+    const size = Math.random() * 30 + 8;
+    b.style.cssText = `width:${size}px;height:${size}px;left:${Math.random()*100}%;bottom:-${size}px;animation-duration:${Math.random()*12+8}s;animation-delay:${Math.random()*10}s;`;
+    container.appendChild(b);
+  }
+
+  // Scroll reveal for steps
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const delay = entry.target.dataset.delay || 0;
+        setTimeout(() => entry.target.classList.add('visible'), +delay);
+      }
+    });
+  }, { threshold: 0.2 });
+  document.querySelectorAll('.step').forEach(s => observer.observe(s));
+
+  // Signup handler
+  function handleSignup() {
+    const input = document.querySelector('.signup-input');
+    const val = input.value.trim();
+    if (!val || !val.includes('@')) {
+      input.style.border = '1px solid rgba(226,75,74,0.6)';
+      setTimeout(() => input.style.border = '', 1500);
+      return;
+    }
+    const btn = document.querySelector('.signup-btn');
+    btn.textContent = '✓ You\'re on the list!';
+    btn.style.background = '#1D9E75';
+    btn.disabled = true;
+    input.value = '';
+    input.placeholder = 'We\'ll be in touch soon!';
+  }
+</script>
+</body>
+</html>
